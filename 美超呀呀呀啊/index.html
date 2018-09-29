@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<style type="text/css">
+			body {
+				min-height: 1000px;
+				padding: 0;
+				margin: 0;
+			}
+			
+			.zoomPic {
+				width: 400px;
+				margin: 30px;
+				position: relative;
+				border: 1px solid rgba(0, 0, 0, .1);
+				z-index: 1;
+			}
+			
+			.zoomHandler {
+				position: fixed;
+				border: 1px solid rgba(0, 0, 0, .1);
+				background: rgba(255, 255, 255, .2);
+				box-shadow: 0px 0px 2px rgba(0,0,0,.5);
+				z-index: 1000;
+				transform: translate(-50%, -50%);
+				pointer-events: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<img src="http://imgsrc.baidu.com/imgad/pic/item/b3b7d0a20cf431ad9c69671e4136acaf2edd9859.jpg" class="zoomPic" />
+		<img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1538242928235&di=167021459b8327634d716973f218f42f&imgtype=0&src=http%3A%2F%2Fimg1.ph.126.net%2FzPC7GU9ekw7QdcPQjoCFdA%3D%3D%2F1141943980615860865.jpg" class="zoomPic" />
+		<img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1538242964402&di=bae8ae357aaedd571bf6ffc9d0752a6f&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimage%2Fc0%253Dshijue1%252C0%252C0%252C294%252C40%2Fsign%3Defcb568a53ee3d6d36cb8f882b7f0757%2F54fbb2fb43166d22f1bc50b94c2309f79152d2d0.jpg" class="zoomPic" />
+		<img src="https://gss3.bdstatic.com/-Po3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike92%2C5%2C5%2C92%2C30/sign=d67b66275bda81cb5aeb8b9f330fbb73/91529822720e0cf3acdfc0280046f21fbe09aa3d.jpg" class="zoomPic" />
+		<script type="text/javascript">
+			(function() {
+				var ratio = [];
+				var winWidth=window.innerWidth;
+				var winHeight=window.innerHeight;
+				var zoom = document.querySelectorAll('.zoomPic');
+				if(zoom.length == 0) {
+					return false;
+				}
+				var zoomHandler = document.createElement('div');
+				zoomHandler.className = 'zoomHandler';
+				document.body.appendChild(zoomHandler);
+
+				for(var i = 0; i < zoom.length; i++) {
+
+					zoom[i].addEventListener("load", (function(n) {
+						return function() {
+							ratio[n] = zoom[n].naturalWidth / zoom[n].width;
+						}
+					})(i));
+
+					zoom[i].addEventListener("mousemove", (function(n) {
+						return function(event) {
+
+							if(ratio[n] <= 1) {
+								return false;
+							}
+
+							var event = event || window.event;
+							var target = event.target || event.srcElement;
+						
+							var cx = event.clientX;
+							var cy = event.clientY;
+						
+							var ox=event.offsetX||event.layerX;
+							var oy=event.offsetY||event.layerY;
+
+							var zoomShowWidth = 100;
+							var zoomShowHeight = 100;
+
+							zoomHandler.style.width = zoomShowWidth + "px";
+							zoomHandler.style.height = zoomShowHeight + "px";
+							zoomHandler.style.left = cx + "px";
+							zoomHandler.style.top =  cy + "px";	
+							zoomHandler.style.backgroundImage = 'url(' + target.src + ')';
+							zoomHandler.style.backgroundPosition = (-ratio[n] *ox + zoomShowWidth / 2) + "px "+(-ratio[n] * oy + zoomShowHeight / 2) + "px";
+							zoomHandler.style.display = "block";
+						}
+					})(i));
+					zoom[i].addEventListener("mouseout", function() {
+						zoomHandler.style.display = "none";
+					});
+				}
+
+			})();
+		</script>
+	</body>
+
+</html>
+
